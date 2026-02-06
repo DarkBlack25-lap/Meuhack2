@@ -1,26 +1,33 @@
--- Proteção contra carregamento incompleto
+-- Bloqueio contra erro de linha 1 (nil value)
 repeat task.wait() until game:IsLoaded()
+task.wait(0.5)
+
 local lp = game:GetService("Players").LocalPlayer
 local sg = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
-sg.Name = "SAB_HUB_V4"; sg.ResetOnSpawn = false
+sg.Name = "DarkBlack_Final"; sg.ResetOnSpawn = false
 
 local SENHA = "Dark123"
 local noclip = false
 
--- TELA DE SENHA (Ajustada com Botão Verificar)
+-- 1. LOGIN (Borda Vermelha)
 local login = Instance.new("Frame", sg)
-login.Size = UDim2.new(0, 450, 0, 300); login.Position = UDim2.new(0.5, -225, 0.5, -150); login.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Instance.new("UICorner", login).CornerRadius = UDim.new(0, 15)
+login.Size = UDim2.new(0, 250, 0, 320); login.Position = UDim2.new(0.5, -125, 0.5, -160); login.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+local lStroke = Instance.new("UIStroke", login); lStroke.Color = Color3.fromRGB(255, 0, 0); lStroke.Thickness = 2
+Instance.new("UICorner", login).CornerRadius = UDim.new(0, 10)
 
-local box = Instance.new("TextBox", login)
-box.Size = UDim2.new(0, 280, 0, 45); box.Position = UDim2.new(0.5, -140, 0.35, 0); box.PlaceholderText = "Digite a Key..."; box.Text = ""; box.BackgroundColor3 = Color3.fromRGB(35, 35, 35); box.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", box)
+local titleL = Instance.new("TextLabel", login)
+titleL.Size = UDim2.new(1, 0, 0, 40); titleL.Text = "DᴀʀᴋBʟᴀᴄᴋ Hub"; titleL.TextColor3 = Color3.fromRGB(255, 0, 0); titleL.BackgroundTransparency = 1; titleL.Font = Enum.Font.Code; titleL.TextSize = 22
 
--- Botão Verificar Key com Brilho Azul
+local keyBox = Instance.new("TextBox", login)
+keyBox.Size = UDim2.new(0, 200, 0, 40); keyBox.Position = UDim2.new(0.5, -100, 0.35, 0); keyBox.PlaceholderText = "Insira a Key..."; keyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); keyBox.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", keyBox)
+
 local verify = Instance.new("TextButton", login)
-verify.Size = UDim2.new(0, 200, 0, 50); verify.Position = UDim2.new(0.5, -100, 0.65, 0); verify.Text = "Verificar Key"; verify.BackgroundColor3 = Color3.fromRGB(40, 40, 40); verify.TextColor3 = Color3.new(1,1,1); verify.Font = Enum.Font.SourceSansBold; verify.TextSize = 18
-local glow = Instance.new("UIStroke", verify); glow.Color = Color3.fromRGB(0, 150, 255); glow.Thickness = 2.5; glow.ApplyStrokeMode = "Border"
+verify.Size = UDim2.new(0, 180, 0, 45); verify.Position = UDim2.new(0.5, -90, 0.65, 0); verify.Text = "Verificar Key"; verify.BackgroundColor3 = Color3.fromRGB(35, 35, 35); verify.TextColor3 = Color3.new(1,1,1)
+local bGlow = Instance.new("UIStroke", verify); bGlow.Color = Color3.fromRGB(0, 150, 255); bGlow.Thickness = 2; bGlow.ApplyStrokeMode = "Border"
 Instance.new("UICorner", verify)
 
--- MENU PRINCIPAL (Com Categorias Laterais)
+-- 2. MENU PRINCIPAL (Bordas Vermelhas)
 local main = Instance.new("Frame", sg)
+main.Size = UDim2.new(0, 220, 0, 350); main.Position = UDim2.new(0.5, -110, 0.5, -175); main.BackgroundColor3 = Color3.fromRGB(15, 15, 15); main.Visible = false
+local mStroke = Instance.new("UIStroke", main); mStroke.Color = Color3.fromRGB(255, 0, 0); mStroke.Thickness = 2
+Instance.new("UICor
