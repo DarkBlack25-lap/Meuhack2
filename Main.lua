@@ -1,6 +1,5 @@
 --[[ 
-    CÓDIGO BASE V10 - DARK BLACK 
-    ESSE CÓDIGO É OTIMIZADO PARA DELTA NO CELULAR
+    SAB HUB V10 - PLAYER UPDATE
 ]]
 
 local p = game.Players.LocalPlayer
@@ -8,30 +7,64 @@ local sg = Instance.new("ScreenGui", p:WaitForChild("PlayerGui"))
 sg.Name = "SAB_HUB_V10"
 sg.ResetOnSpawn = false
 
--- Função para criar janelas e botões de forma organizada
 local function criar(classe, pai, tamanho, posicao, cor)
     local inst = Instance.new(classe, pai)
     inst.Size = tamanho
     inst.Position = posicao
     if cor then inst.BackgroundColor3 = cor end
-    if not classe:find("Label") then Instance.new("UICorner", inst) end
+    local corner = Instance.new("UICorner", inst)
     return inst
 end
 
 -- Janela Principal
 local main = criar("Frame", sg, UDim2.new(0, 400, 0, 250), UDim2.new(0.5, -200, 0.5, -125), Color3.fromRGB(25, 25, 25))
-local linha = criar("Frame", main, UDim2.new(1, 0, 0, 3), UDim2.new(0, 0, 0, 0), Color3.fromHSV(tick()%5/5, 1, 1))
-
--- Título
 local titulo = Instance.new("TextLabel", main)
-titulo.Size, titulo.Text = UDim2.new(1, 0, 0, 35), "DARK BLACK HUB - V10"
+titulo.Size, titulo.Text = UDim2.new(1, 0, 0, 35), "DARK BLACK - PLAYER MENU"
 titulo.TextColor3, titulo.BackgroundTransparency = Color3.new(1, 1, 1), 1
-titulo.TextSize = 18
 
--- Container das Abas (Categorias)
-local menuAbas = criar("Frame", main, UDim2.new(0, 100, 1, -40), UDim2.new(0, 5, 0, 35), Color3.fromRGB(35, 35, 35))
-local conteudo = criar("Frame", main, UDim2.new(1, -115, 1, -40), UDim2.new(0, 110, 0, 35), Color3.fromRGB(30, 30, 30))
+-- Container de Botões
+local abaPlayer = criar("ScrollingFrame", main, UDim2.new(1, -20, 1, -50), UDim2.new(0, 10, 0, 40), Color3.fromRGB(30, 30, 30))
+abaPlayer.ScrollBarThickness = 2
 
--- Função para trocar de Aba
-local function novaAba(nome, textoBotao)
-    local abaFrame = criar("ScrollingFrame", conteudo, UDim2.new(1, 0, 1, 0), UDim2
+-- FUNÇÃO: ATRAVESSAR PAREDES (NOCLIP)
+local noclip = false
+local btnNoclip = criar("TextButton", abaPlayer, UDim2.new(0.9, 0, 0, 40), UDim2.new(0.05, 0, 0, 10), Color3.fromRGB(150, 0, 0))
+btnNoclip.Text = "NOCLIP: OFF"
+btnNoclip.MouseButton1Click:Connect(function()
+    noclip = not noclip
+    btnNoclip.Text = noclip and "NOCLIP: ON" or "NOCLIP: OFF"
+    btnNoclip.BackgroundColor3 = noclip and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+end)
+
+game:GetService("RunService").Stepped:Connect(function()
+    if noclip then
+        for _, v in pairs(p.Character:GetDescendants()) do
+            if v:IsA("BasePart") then v.CanCollide = false end
+        end
+    end
+end)
+
+-- FUNÇÃO: VOAR (FLY)
+local flying = false
+local btnFly = criar("TextButton", abaPlayer, UDim2.new(0.9, 0, 0, 40), UDim2.new(0.05, 0, 0, 60), Color3.fromRGB(150, 0, 0))
+btnFly.Text = "VOAR: OFF"
+btnFly.MouseButton1Click:Connect(function()
+    flying = not flying
+    btnFly.Text = flying and "VOAR: ON" or "VOAR: OFF"
+    btnFly.BackgroundColor3 = flying and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+    
+    local char = p.Character
+    if flying then
+        local bv = Instance.new("BodyVelocity", char.PrimaryPart)
+        bv.Name = "FlyVel"
+        bv.MaxForce = Vector3.new(1e6, 1e6, 1e6)
+        bv.Velocity = Vector3.new(0, 50, 0) -- Sobe um pouco ao ativar
+    else
+        if char.PrimaryPart:FindFirstChild("FlyVel") then
+            char.PrimaryPart.FlyVel:Destroy()
+        end
+    end
+end)
+
+-- Botão Abrir/Fechar (DB)
+local btnAbrir = criar("TextButton", sg, UDim2.new(0, 50, 0, 50), UDim2.new(0, 10, 0.5, -25), Color3.new(
