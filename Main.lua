@@ -1,145 +1,139 @@
 --[[ 
-    SAB HUB V17 - VERSÃO FINAL ESTABILIZADA
+    SAB HUB V18 - VERSÃO ANTI-ERRO DEFINITIVA
 ]]
 
-local p = game.Players.LocalPlayer
-local sg = Instance.new("ScreenGui", p:WaitForChild("PlayerGui"))
-sg.Name = "SAB_HUB_V17"
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local lp = Players.LocalPlayer
+local sg = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
+sg.Name = "SAB_HUB_FINAL"
 sg.ResetOnSpawn = false
 
 local SENHA_CORRETA = "Dark123"
-local noclip, flying = false, false
+local noclip = false
 
--- Função de Criação Simples (Evita Erros de Nil)
-local function criar(classe, pai, tam, pos, cor)
-    local i = Instance.new(classe, pai)
-    i.Size, i.Position = tam, pos
-    if cor then i.BackgroundColor3 = cor end
-    local corner = Instance.new("UICorner", i)
-    corner.CornerRadius = UDim.new(0, 8)
-    return i
+-- Função de interface estável
+local function criarElemento(classe, pai, props)
+    local inst = Instance.new(classe)
+    for i, v in pairs(props) do inst[i] = v end
+    inst.Parent = pai
+    Instance.new("UICorner", inst).CornerRadius = UDim.new(0, 8)
+    return inst
 end
 
--- TELA DE KEY
-local keyFrame = criar("Frame", sg, UDim2.new(0, 300, 0, 160), UDim2.new(0.5, -150, 0.5, -80), Color3.fromRGB(20, 20, 20))
-local kTitle = Instance.new("TextLabel", keyFrame)
-kTitle.Size, kTitle.Text = UDim2.new(1, 0, 0, 40), "SISTEMA DE KEY"
-kTitle.TextColor3, kTitle.BackgroundTransparency = Color3.new(1, 1, 1), 1
+-- TELA DE KEY (Aparece Primeiro)
+local keyFrame = criarElemento("Frame", sg, {
+    Size = UDim2.new(0, 300, 0, 160),
+    Position = UDim2.new(0.5, -150, 0.5, -80),
+    BackgroundColor3 = Color3.fromRGB(25, 25, 25),
+    BorderSizePixel = 0,
+    ZIndex = 10
+})
 
-local input = Instance.new("TextBox", keyFrame)
-input.Size, input.Position = UDim2.new(0.8, 0, 0, 35), UDim2.new(0.1, 0, 0.35, 0)
-input.BackgroundColor3, input.TextColor3 = Color3.fromRGB(35, 35, 35), Color3.new(1, 1, 1)
-input.PlaceholderText, input.Text = "Senha aqui...", ""
+local txtKey = criarElemento("TextBox", keyFrame, {
+    Size = UDim2.new(0.8, 0, 0, 40),
+    Position = UDim2.new(0.1, 0, 0.3, 0),
+    BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+    TextColor3 = Color3.new(1, 1, 1),
+    PlaceholderText = "Senha aqui...",
+    Text = "",
+    ZIndex = 11
+})
 
-local btnVerify = criar("TextButton", keyFrame, UDim2.new(0.8, 0, 0, 35), UDim2.new(0.1, 0, 0.7, 0), Color3.fromRGB(0, 150, 0))
-btnVerify.Text, btnVerify.TextColor3 = "VERIFICAR", Color3.new(1, 1, 1)
+local btnKey = criarElemento("TextButton", keyFrame, {
+    Size = UDim2.new(0.8, 0, 0, 40),
+    Position = UDim2.new(0.1, 0, 0.65, 0),
+    BackgroundColor3 = Color3.fromRGB(0, 180, 0),
+    Text = "VERIFICAR",
+    TextColor3 = Color3.new(1, 1, 1),
+    ZIndex = 11
+})
 
--- MENU PRINCIPAL
-local main = criar("Frame", sg, UDim2.new(0, 420, 0, 280), UDim2.new(0.5, -210, 0.5, -140), Color3.fromRGB(15, 15, 15))
-main.Visible = false
+-- MENU PRINCIPAL (Inicia Invisível)
+local main = criarElemento("Frame", sg, {
+    Size = UDim2.new(0, 400, 0, 250),
+    Position = UDim2.new(0.5, -200, 0.5, -125),
+    BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+    Visible = false,
+    ZIndex = 5
+})
 
-local side = criar("Frame", main, UDim2.new(0, 110, 1, -10), UDim2.new(0, 5, 0, 5), Color3.fromRGB(25, 25, 25))
-local cont = criar("Frame", main, UDim2.new(1, -125, 1, -10), UDim2.new(0, 120, 0, 5), Color3.fromRGB(20, 20, 20))
+-- ABAS (Discord e Info inclusos aqui)
+local side = criarElemento("Frame", main, {
+    Size = UDim2.new(0, 100, 1, -10),
+    Position = UDim2.new(0, 5, 0, 5),
+    BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+    ZIndex = 6
+})
 
-local function criarPag()
-    local g = Instance.new("ScrollingFrame", cont)
-    g.Size, g.BackgroundTransparency, g.Visible, g.ScrollBarThickness = UDim2.new(1, 0, 1, 0), 1, false, 0
-    return g
+local container = criarElemento("Frame", main, {
+    Size = UDim2.new(1, -115, 1, -10),
+    Position = UDim2.new(0, 110, 0, 5),
+    BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+    ZIndex = 6
+})
+
+local pagPlayer = criarElemento("ScrollingFrame", container, {Size = UDim2.new(1,0,1,0), BackgroundTransparency = 1, Visible = true, CanvasSize = UDim2.new(0,0,2,0), ScrollBarThickness = 0, ZIndex = 7})
+local pagExtra = criarElemento("Frame", container, {Size = UDim2.new(1,0,1,0), BackgroundTransparency = 1, Visible = false, ZIndex = 7})
+
+-- Botões de Aba
+local function criarAba(txt, pos, pgn)
+    local b = criarElemento("TextButton", side, {Size = UDim2.new(0.9,0,0,30), Position = UDim2.new(0.05,0,0,pos), Text = txt, BackgroundColor3 = Color3.fromRGB(50,50,50), TextColor3 = Color3.new(1,1,1), ZIndex = 8})
+    b.MouseButton1Click:Connect(function() pagPlayer.Visible = false; pagExtra.Visible = false; pgn.Visible = true end)
 end
+criarAba("PLAYER", 10, pagPlayer)
+criarAba("INFO", 45, pagExtra)
 
-local pagPlayer = criarPag()
-pagPlayer.Visible = true
-local pagDiscord = criarPag()
-local pagKeyInfo = criarPag()
+-- Conteúdo da Aba INFO (Discord e Key)
+local infoText = criarElemento("TextLabel", pagExtra, {Size = UDim2.new(1,0,1,0), Text = "DISCORD: discord.gg/SABHUB\n\nKEY: Dark123", TextColor3 = Color3.new(1,1,1), BackgroundTransparency = 1, ZIndex = 8})
 
--- BOTÕES DE CATEGORIA
-local function aba(nome, pos, pgn)
-    local b = criar("TextButton", side, UDim2.new(0.9, 0, 0, 35), UDim2.new(0.05, 0, 0, pos), Color3.fromRGB(40, 40, 40))
-    b.Text, b.TextColor3 = nome, Color3.new(1,1,1)
-    b.MouseButton1Click:Connect(function()
-        pagPlayer.Visible, pagDiscord.Visible, pagKeyInfo.Visible = false, false, false
-        pgn.Visible = true
-    end)
-end
-
-aba("PLAYER", 10, pagPlayer)
-aba("DISCORD", 50, pagDiscord)
-aba("KEY INFO", 90, pagKeyInfo)
-
--- CONTEÚDO EXTRA
-local dLab = Instance.new("TextLabel", pagDiscord)
-dLab.Size, dLab.Text = UDim2.new(1, 0, 0, 100), "DISCORD:\ndiscord.gg/SABHUB"
-dLab.TextColor3, dLab.BackgroundTransparency = Color3.new(1,1,1), 1
-
-local kLab = Instance.new("TextLabel", pagKeyInfo)
-kLab.Size, kLab.Text = UDim2.new(1, 0, 0, 100), "KEY ATUAL:\n" .. SENHA_CORRETA
-kLab.TextColor3, kLab.BackgroundTransparency = Color3.new(1,1,1), 1
-
--- BOTÃO PÍLULA (TOGGLE)
-local function toggle(nome, pai, pos, callback)
-    local f = criar("Frame", pai, UDim2.new(0.95, 0, 0, 50), UDim2.new(0.025, 0, 0, pos), Color3.fromRGB(30, 30, 30))
-    local t = Instance.new("TextLabel", f)
-    t.Size, t.Position, t.Text = UDim2.new(0.6, 0, 1, 0), UDim2.new(0.05, 0, 0, 0), nome
-    t.TextColor3, t.BackgroundTransparency, t.TextXAlignment = Color3.new(1,1,1), 1, 0
-
-    local b = criar("TextButton", f, UDim2.new(0, 45, 0, 22), UDim2.new(0.75, 0, 0.25, 0), Color3.fromRGB(150, 0, 0))
-    b.Text = ""
-    local píl = criar("Frame", b, UDim2.new(0, 18, 0, 18), UDim2.new(0, 2, 0.5, -9), Color3.new(1, 1, 1))
+-- Toggle Estilo Pílula
+local function toggle(txt, pos, callback)
+    local f = criarElemento("Frame", pagPlayer, {Size = UDim2.new(0.95,0,0,45), Position = UDim2.new(0,5,0,pos), BackgroundColor3 = Color3.fromRGB(35,35,35), ZIndex = 8})
+    local l = criarElemento("TextLabel", f, {Size = UDim2.new(0.6,0,1,0), Position = UDim2.new(0.05,0,0,0), Text = txt, TextColor3 = Color3.new(1,1,1), BackgroundTransparency = 1, TextXAlignment = 0, ZIndex = 9})
+    local b = criarElemento("TextButton", f, {Size = UDim2.new(0, 45, 0, 22), Position = UDim2.new(0.75,0,0.25,0), Text = "", BackgroundColor3 = Color3.fromRGB(150,0,0), ZIndex = 9})
+    local p = criarElemento("Frame", b, {Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(0, 2, 0.5, -9), BackgroundColor3 = Color3.new(1,1,1), ZIndex = 10})
     
-    local lig = false
+    local state = false
     b.MouseButton1Click:Connect(function()
-        lig = not lig
-        b.BackgroundColor3 = lig and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
-        píl.Position = lig and UDim2.new(0, 25, 0.5, -9) or UDim2.new(0, 2, 0.5, -9)
-        callback(lig)
+        state = not state
+        b.BackgroundColor3 = state and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(150, 0, 0)
+        p.Position = state and UDim2.new(0, 25, 0.5, -9) or UDim2.new(0, 2, 0.5, -9)
+        callback(state)
     end)
 end
 
-toggle("NOCLIP", pagPlayer, 10, function(v) noclip = v end)
-toggle("VOAR (FLY)", pagPlayer, 65, function(v)
-    flying = v
-    if flying then
-        local bv = Instance.new("BodyVelocity", p.Character.PrimaryPart)
-        bv.Name = "SAB_FLY"
-        bv.MaxForce = Vector3.new(1e6, 1e6, 1e6)
-        bv.Velocity = Vector3.new(0, 0, 0)
-    else
-        if p.Character.PrimaryPart:FindFirstChild("SAB_FLY") then p.Character.PrimaryPart.SAB_FLY:Destroy() end
-    end
-end)
+toggle("NOCLIP", 10, function(v) noclip = v end)
 
--- LOOP MECÂNICO
-game:GetService("RunService").Stepped:Connect(function()
-    if noclip and p.Character then
-        for _, v in pairs(p.Character:GetDescendants()) do
+-- Loop Noclip
+RunService.Stepped:Connect(function()
+    if noclip and lp.Character then
+        for _, v in pairs(lp.Character:GetDescendants()) do
             if v:IsA("BasePart") then v.CanCollide = false end
         end
     end
 end)
 
--- BOTÃO DB MÓVEL
-local btnDB = criar("TextButton", sg, UDim2.new(0, 50, 0, 50), UDim2.new(0, 10, 0.5, 0), Color3.new(0, 0, 0))
-btnDB.Text, btnDB.TextColor3 = "DB", Color3.new(1, 1, 1)
-
--- Arrastar (Toque)
-local drag = false
-btnDB.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.Touch then drag = true end end)
-btnDB.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.Touch then drag = false end end)
-game:GetService("UserInputService").InputChanged:Connect(function(i)
-    if drag and i.UserInputType == Enum.UserInputType.Touch then
+-- Botão DB Arrastável
+local btnDB = criarElemento("TextButton", sg, {Size = UDim2.new(0, 50, 0, 50), Position = UDim2.new(0, 10, 0.5, 0), Text = "DB", BackgroundColor3 = Color3.new(0,0,0), TextColor3 = Color3.new(1,1,1), ZIndex = 100})
+local dragging = false
+btnDB.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.Touch then dragging = true end end)
+btnDB.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.Touch then dragging = false end end)
+UserInputService.InputChanged:Connect(function(i)
+    if dragging and i.UserInputType == Enum.UserInputType.Touch then
         btnDB.Position = UDim2.new(0, i.Position.X - 25, 0, i.Position.Y - 25)
     end
 end)
-
 btnDB.MouseButton1Click:Connect(function() if not keyFrame.Parent then main.Visible = not main.Visible end end)
 
--- LOGICA KEY
-btnVerify.MouseButton1Click:Connect(function()
-    if input.Text == SENHA_CORRETA then
+-- Verificação de Key
+btnKey.MouseButton1Click:Connect(function()
+    if txtKey.Text == SENHA_CORRETA then
         keyFrame:Destroy()
         main.Visible = true
     else
-        input.Text = ""
-        input.PlaceholderText = "SENHA INCORRETA"
+        txtKey.Text = ""; txtKey.PlaceholderText = "ERRO!"
     end
 end)
