@@ -1,86 +1,90 @@
 --[[ 
-    SAB HUB V24 - FIX TOTAL PARA DELTA (SEM TABELAS)
+    SAB HUB V25 - VERSÃO ULTRA COMPATÍVEL (MÓVEL/DELTA)
 ]]
 
 local lp = game:GetService("Players").LocalPlayer
 local sg = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
-sg.Name = "SAB_HUB_V24"
+sg.Name = "SAB_HUB_V25"
 sg.ResetOnSpawn = false
 
-local SENHA_CORRETA = "Dark123"
+local SENHA = "Dark123"
 local noclip = false
 
--- Função de arredondar e RGB simplificadas para evitar erros
-local function fix(inst) Instance.new("UICorner", inst).CornerRadius = UDim.new(0, 10) end
-local function luz(inst)
+-- Arredondar cantos (Simples)
+local function round(i) Instance.new("UICorner", i).CornerRadius = UDim.new(0, 10) end
+
+-- Luz RGB (Estável)
+local function rgb(i)
     task.spawn(function()
-        while inst and inst.Parent do
-            inst.BackgroundColor3 = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        while i and i.Parent do
+            i.BackgroundColor3 = Color3.fromHSV(tick() % 5 / 5, 1, 1)
             task.wait()
         end
     end)
 end
 
 -- TELA DE KEY (420x280)
-local key = Instance.new("Frame", sg)
-key.Size = UDim2.new(0, 420, 0, 280)
-key.Position = UDim2.new(0.5, -210, 0.5, -140)
-key.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-key.ZIndex = 50
-fix(key)
+local keyFrame = Instance.new("Frame", sg)
+keyFrame.Size = UDim2.new(0, 420, 0, 280)
+keyFrame.Position = UDim2.new(0.5, -210, 0.5, -140)
+keyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+keyFrame.ZIndex = 50
+round(keyFrame)
 
-local bKey = Instance.new("Frame", key)
+local bKey = Instance.new("Frame", keyFrame)
 bKey.Size = UDim2.new(1, 4, 1, 4)
 bKey.Position = UDim2.new(0, -2, 0, -2)
 bKey.ZIndex = 49
-fix(bKey)
-luz(bKey)
+round(bKey)
+rgb(bKey)
 
-local box = Instance.new("TextBox", key)
+local box = Instance.new("TextBox", keyFrame)
 box.Size = UDim2.new(0, 300, 0, 45)
-box.Position = UDim2.new(0.5, -150, 0.35, 0)
-box.PlaceholderText = "Digite a Key..."
+box.Position = UDim2.new(0.5, -150, 0.4, 0)
 box.Text = ""
+box.PlaceholderText = "Digite a Key..."
 box.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-box.TextColor3 = Color3.new(1,1,1)
-fix(box)
+box.TextColor3 = Color3.new(1, 1, 1)
+box.ZIndex = 51
+round(box)
 
-local btnV = Instance.new("TextButton", key)
+local btnV = Instance.new("TextButton", keyFrame)
 btnV.Size = UDim2.new(0, 300, 0, 45)
-btnV.Position = UDim2.new(0.5, -150, 0.6, 0)
+btnV.Position = UDim2.new(0.5, -150, 0.65, 0)
 btnV.Text = "VERIFICAR"
 btnV.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
-btnV.TextColor3 = Color3.new(1,1,1)
-fix(btnV)
+btnV.TextColor3 = Color3.new(1, 1, 1)
+btnV.ZIndex = 51
+round(btnV)
 
 -- MENU PRINCIPAL (420x280)
-local menu = Instance.new("Frame", sg)
-menu.Size = UDim2.new(0, 420, 0, 280)
-menu.Position = UDim2.new(0.5, -210, 0.5, -140)
-menu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-menu.Visible = false
-fix(menu)
+local main = Instance.new("Frame", sg)
+main.Size = UDim2.new(0, 420, 0, 280)
+main.Position = UDim2.new(0.5, -210, 0.5, -140)
+main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+main.Visible = false
+round(main)
 
-local bMenu = Instance.new("Frame", menu)
-bMenu.Size = UDim2.new(1, 4, 1, 4)
-bMenu.Position = UDim2.new(0, -2, 0, -2)
-fix(bMenu)
-luz(bMenu)
+local bMain = Instance.new("Frame", main)
+bMain.Size = UDim2.new(1, 4, 1, 4)
+bMain.Position = UDim2.new(0, -2, 0, -2)
+round(bMain)
+rgb(bMain)
 
--- CATEGORIAS (Discord e Key)
-local side = Instance.new("Frame", menu)
+-- LATERAIS E CONTEÚDO
+local side = Instance.new("Frame", main)
 side.Size = UDim2.new(0, 110, 1, -10)
 side.Position = UDim2.new(0, 5, 0, 5)
 side.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-fix(side)
+round(side)
 
-local cont = Instance.new("Frame", menu)
+local cont = Instance.new("Frame", main)
 cont.Size = UDim2.new(1, -125, 1, -10)
 cont.Position = UDim2.new(0, 120, 0, 5)
 cont.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-fix(cont)
+round(cont)
 
--- PÁGINAS
+-- PÁGINAS (PLAYER, DISCORD, KEY)
 local pP = Instance.new("ScrollingFrame", cont)
 pP.Size = UDim2.new(1,0,1,0); pP.BackgroundTransparency = 1; pP.Visible = true; pP.ScrollBarThickness = 0
 
@@ -92,41 +96,4 @@ dL.Size = UDim2.new(1,0,1,0); dL.Text = "DISCORD:\ndiscord.gg/SABHUB"; dL.TextCo
 local pK = Instance.new("Frame", cont)
 pK.Size = UDim2.new(1,0,1,0); pK.BackgroundTransparency = 1; pK.Visible = false
 local kL = Instance.new("TextLabel", pK)
-kL.Size = UDim2.new(1,0,1,0); kL.Text = "KEY ATUAL:\nDark123"; kL.TextColor3 = Color3.new(1,1,1); kL.BackgroundTransparency = 1
-
--- BOTÕES DAS CATEGORIAS (Sem usar tabelas ou funções complexas)
-local b1 = Instance.new("TextButton", side)
-b1.Size = UDim2.new(0, 100, 0, 35); b1.Position = UDim2.new(0, 5, 0, 10); b1.Text = "PLAYER"; fix(b1)
-b1.MouseButton1Click:Connect(function() pP.Visible = true; pD.Visible = false; pK.Visible = false end)
-
-local b2 = Instance.new("TextButton", side)
-b2.Size = UDim2.new(0, 100, 0, 35); b2.Position = UDim2.new(0, 5, 0, 50); b2.Text = "DISCORD"; fix(b2)
-b2.MouseButton1Click:Connect(function() pP.Visible = false; pD.Visible = true; pK.Visible = false end)
-
-local b3 = Instance.new("TextButton", side)
-b3.Size = UDim2.new(0, 100, 0, 35); b3.Position = UDim2.new(0, 5, 0, 90); b3.Text = "KEY INFO"; fix(b3)
-b3.MouseButton1Click:Connect(function() pP.Visible = false; pD.Visible = false; pK.Visible = true end)
-
--- FUNÇÃO DE VERIFICAR (FIX DEFINITIVO)
-btnV.MouseButton1Click:Connect(function()
-    if box.Text == SENHA_CORRETA then
-        key:Destroy()
-        menu.Visible = true
-    else
-        box.Text = ""
-        box.PlaceholderText = "SENHA ERRADA!"
-    end
-end)
-
--- BOTÃO DB (Luz RGB inclusa)
-local db = Instance.new("TextButton", sg)
-db.Size = UDim2.new(0, 55, 0, 55); db.Position = UDim2.new(0, 10, 0.5, 0); db.Text = "DB"; db.ZIndex = 100; fix(db)
-local bDB = Instance.new("Frame", db); bDB.Size = UDim2.new(1,6,1,6); bDB.Position = UDim2.new(0,-3,0,-3); bDB.ZIndex = 99; fix(bDB); luz(bDB)
-
-db.MouseButton1Click:Connect(function() if not key.Parent then menu.Visible = not menu.Visible end end)
-
--- TOGGLE NOCLIP SIMPLES
-local tF = Instance.new("Frame", pP)
-tF.Size = UDim2.new(0, 270, 0, 45); tF.Position = UDim2.new(0, 5, 0, 10); tF.BackgroundColor3 = Color3.fromRGB(35,35,35); fix(tF)
-local tL = Instance.new("TextLabel", tF); tL.Size = UDim2.new(0.6,0,1,0); tL.Text = "ATRAVESSAR"; tL.TextColor3 = Color3.new(1,1,1); tL.BackgroundTransparency = 1
-local tB = Instance.new("TextButton", tF
+k
